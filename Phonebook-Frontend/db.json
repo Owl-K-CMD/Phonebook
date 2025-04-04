@@ -1,0 +1,34 @@
+{
+  "person": [
+    {
+      "name": "Arto ellas",
+      "phoneNumber": "040-123456",
+      "id": 1
+    },
+    {
+      "name": "Ada Lovelace",
+      "phoneNumber": "39-44-5323523",
+      "id": 2
+    },
+    {
+      "name": "Dan Abramov",
+      "phoneNumber": "12-43-234345",
+      "id": 3
+    },
+    {
+      "name": "Mary Poppendieck",
+      "phoneNumber": "39-23-6423122",
+      "id": 4
+    },
+    {
+      "name": "Penelope Kondwa",
+      "phoneNumber": "0123456789",
+      "id": 5
+    },
+    {
+      "id": "aae7",
+      "name": "Yalongo Chickucho",
+      "phoneNumber": "0987654321"
+    }
+  ]
+}
