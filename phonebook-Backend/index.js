@@ -122,6 +122,11 @@ const id = Math.random()
   response.json(newPerson)
 })
 
-const PORT =  process.env.PORT || 3000
-app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
+
+
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
