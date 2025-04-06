@@ -27,6 +27,11 @@ const persons = [
     id: "4",
     name: "Mary Poppendieck",
     number: "7675782910"
+  },
+  {
+    id: "5",
+    name: "Penelope",
+    number: "12345678909"
   }
 ]
 
@@ -39,10 +44,10 @@ app.get('/', (request, response) => {
 
 app.get('/api/person',(request, response) => {
   response.json(persons)
-})
+});
 
 app.get('/api/info', (request, response) => {
-  console.log('This is work')
+  console.log('This is work');
   response.send(`Phonebook has info for ${person} 
     people </br> ${getCurrentDateTime()}`)  
 })
