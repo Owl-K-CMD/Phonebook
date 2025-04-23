@@ -13,8 +13,9 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
-app.use(requestLogger)
 app.use(express.static('dist'))
+app.use(requestLogger)
+
 
 app.use(express.json())
 
