@@ -30,7 +30,7 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons',(request, response, next) => {
-  Person.find({ }).then(person => {
+  Person.find({}).then(person => {
     response.json(person)
   })
 })
@@ -81,9 +81,9 @@ const id = Math.random()
       error: 'name missing'
     })
 
-    if(!body.number)
+    if(!body.phonenumber)
     return response.status(400).json({
-      error: 'number missing'
+      error: 'phonenumber missing'
 })
   
 
@@ -91,7 +91,7 @@ const id = Math.random()
   const newPerson = {
     id: id,
     name: body.name,
-    number: body.number
+    phonenumber: body.phonenumber
   }
    const nameExistence = person.some(person => person.name === newPerson.name)
   if(nameExistence)
@@ -99,12 +99,12 @@ const id = Math.random()
     return response.status(400).json({
       error: 'name must be unique'
     })}
-   const numberExistence = person.some(person => person.number === newPerson.number)
+   const phonenumberExistence = person.some(person => person.phonenumber === newPerson.phonenumber)
    
-    if(numberExistence)
+    if(phonenumberExistence)
     {
       return response.status(400).json({
-        error: 'number must be unique'
+        error: 'phonenumber must be unique'
       })}
 
   person.push(newPerson)
