@@ -1,81 +1,70 @@
 
-//const http = require('http')
+
+require('dotenv').config()
+const Person = require('./models/person')
 const express = require('express')
 const app = express()
 
-app.use(express.json())
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+
+app.use(requestLogger)
 app.use(express.static('dist'))
 
+app.use(express.json())
 
-const persons = [
-  {
-    id: "1",
-    name: "Arto Hellas",
-    phoneNumber: "040-123456"
-  },
-  {
-    id: "2",
-    name: "Ada Lovelace",
-    phoneNumber: "39-44-5323523"
-  },
-  {
-    id: "3",
-    name: "Dan Abramov",
-    phoneNumber: "12-43-234345"
-  },
-  {
-    id: "4",
-    name: "Mary Poppendieck",
-    phoneNumber: "7675782910"
-  },
-  {
-    id: "5",
-    name: "Penelope",
-    phoneNumber: "12345678909"
-  }
-]
 
-const person = persons.length;
-const getCurrentDateTime = () => new Date()
+
+const person = [ ]
+
+
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 
-app.get('/api/person',(request, response) => {
-  response.json(persons)
-});
+app.get('/api/persons',(request, response, next) => {
+  Person.find({ }).then(person => {
+    response.json(person)
+  })
+})
+  
 
 app.get('/api/info', (request, response) => {
   console.log('This is work');
-  response.send(`Phonebook has info for ${person} 
+  const persons = person.length;
+const getCurrentDateTime = () => new Date()
+  response.send(`Phonebook has info for ${persons} 
     people </br> ${getCurrentDateTime()}`)  
 })
 
 app.get('/api/persons/:id', (request, response) => {
-const id = request.params.id
-const person2 =persons.find(person => person.id ===id)
-
-if (person2) {
-  response.json(person2)
-}
-else 
-{
-  response.status(404).end()
-}
+Person.findById(request.params.id).then(person => {
+  if (person) {
+    response.json(person)
+  } else {
+    response.status(404).end()
+  }
 })
+})
+
 
 app.delete('/api/persons/:id', (request, response) => {
   const id = request.params.id
-  const initialLenght = persons.length
-  const newPersons = persons.filter(person => person.id !== id);
+  const initialLenght = person.length
+  const newPersons = person.filter(person => person.id !== id);
   const finalLenght = newPersons.length
   if(initialLenght === finalLenght)
   {
     response.status(404).end()
   } else{
-    persons.length = 0
-    persons.push(...newPersons)
+    person.length = 0
+    person.push(...newPersons)
     
     response.status(204).end()
   }
@@ -84,11 +73,7 @@ app.delete('/api/persons/:id', (request, response) => {
 app.post('/api/persons', (request,response) => {
   const body = request.body
 
-/*  const maxId = persons.length > 0
-  ?Math.random(...persons.map(n => Number(n.id))) 
-  : 0
-  const id = (maxId + 1).toString()
-*/
+
 const id = Math.random()
   if(!body.name)
     return response.status(400).json({
@@ -107,13 +92,13 @@ const id = Math.random()
     name: body.name,
     number: body.number
   }
-   const nameExistence = persons.some(person => person.name === newPerson.name)
+   const nameExistence = person.some(person => person.name === newPerson.name)
   if(nameExistence)
   {
     return response.status(400).json({
       error: 'name must be unique'
     })}
-   const numberExistence = persons.some(person => person.number === newPerson.number)
+   const numberExistence = person.some(person => person.number === newPerson.number)
    
     if(numberExistence)
     {
@@ -121,10 +106,11 @@ const id = Math.random()
         error: 'number must be unique'
       })}
 
-  persons.push(newPerson)
-  response.json(newPerson)
+  person.push(newPerson)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
-
 
 
 
