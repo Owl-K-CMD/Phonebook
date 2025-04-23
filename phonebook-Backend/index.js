@@ -20,41 +20,53 @@ app.use(requestLogger)
 app.use(express.json())
 
 
-
-const person = [ ]
-
-
-
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 
 app.get('/api/persons',(request, response, next) => {
-  Person.find({}).then(person => {
-    response.json(person)
+  Person.find({}).then(persons => {
+    response.json(persons)
   })
-})
-  
+  .catch(error => next(error))
+  })
 
-app.get('/api/info', (request, response) => {
-  console.log('This is work');
-  const persons = person.length;
-const getCurrentDateTime = () => new Date()
-  response.send(`Phonebook has info for ${persons} 
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+  .then(person => {
+    if (person) {
+      response.json(person)
+    } else {
+      response.status(404).send({error:'Person not foud'})
+    }
+  })
+  .catch(error => next(error))
+})  
+
+app.get('/api/info', (request, response, next) => {
+  console.log('This is work')
+Person.countDocument({})
+.then(count => {
+const getCurrentDateTime  = () => new Date()
+  response.send(`Phonebook has info for ${count} 
     people </br> ${getCurrentDateTime()}`)  
 })
+.catch(error => next(error))
+})
 
-app.get('/api/persons/:id', (request, response) => {
-Person.findById(request.params.id).then(person => {
+app.get('/api/persons/:id', (request, response, next) => {
+Person.findById(request.params.id)
+.then(person => {
   if (person) {
     response.json(person)
   } else {
-    response.status(404).end()
+    response.status(404).send({error: 'Person not found'})
   }
 })
+.catch(error => next(error))
 })
 
-
+/*
 app.delete('/api/persons/:id', (request, response) => {
   const id = request.params.id
   const initialLenght = person.length
@@ -70,12 +82,23 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(204).end()
   }
 })
+*/
+
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndDelete(request.params.id)
+    .then(result => {
+      if (result) {
+        response.status(204).end();
+      } else {
+        response.status(404).end({error: 'Person not found'});
+      }
+    })
+    .catch(error => next(error));
+})
 
 app.post('/api/persons', (request,response) => {
   const body = request.body
 
-
-const id = Math.random()
   if(!body.name)
     return response.status(400).json({
       error: 'name missing'
@@ -87,9 +110,9 @@ const id = Math.random()
 })
   
 
+ /* 
+  onst newPerson = {
   
-  const newPerson = {
-    id: id,
     name: body.name,
     phonenumber: body.phonenumber
   }
@@ -106,11 +129,27 @@ const id = Math.random()
       return response.status(400).json({
         error: 'phonenumber must be unique'
       })}
-
-  person.push(newPerson)
+*/
+ 
+Person.findone({$or: [{ name: body.name }, { phonenumber:body.phonenumber}] })
+.then(existingPerson => {
+  if (existingPerson) {
+    if(existingPerson.name ===body.name) {
+      return response.status(400).json({error: 'name must be unique'})
+    } else {
+      return response.status(400).json({error: 'phonenumber must be unique'})
+    }
+  }
+  const person = new Person({
+    name: body.name,
+    phonenumber: body.phonenumber
+})
   person.save().then(savedPerson => {
     response.json(savedPerson)
   })
+  .catch(error => next(error))
+})
+.catch(error => next(error))
 })
 
 
