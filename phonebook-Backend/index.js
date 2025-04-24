@@ -41,18 +41,17 @@ app.get('/api/persons/:id', (request, response, next) => {
     }
   })
   .catch(error => next(error))
-})  
+})
 
 app.get('/api/info', (request, response, next) => {
   console.log('This is work')
-Person.countDocument({})
-.then(count => {
+Person.countDocument({}).then(count => {
 const getCurrentDateTime  = () => new Date()
   response.send(`Phonebook has info for ${count} 
-    people </br> ${getCurrentDateTime()}`)  
-})
-.catch(error => next(error))
-})
+    people </br> ${getCurrentDateTime()}`)
+  })
+.catch(error => next(error)) 
+  } )
 
 app.get('/api/persons/:id', (request, response, next) => {
 Person.findById(request.params.id)
@@ -96,19 +95,19 @@ app.delete('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error));
 })
 
-app.post('/api/persons', (request,response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
-  if(!body.name)
+  if (!body.name) {
     return response.status(400).json({
       error: 'name missing'
     })
-
-    if(!body.phonenumber)
+   }
+    if (!body.phonenumber) {
     return response.status(400).json({
       error: 'phonenumber missing'
 })
-  
+}  
 
  /* 
   onst newPerson = {
@@ -131,7 +130,7 @@ app.post('/api/persons', (request,response) => {
       })}
 */
  
-Person.findone({$or: [{ name: body.name }, { phonenumber:body.phonenumber}] })
+Person.findOne({$or: [{ name: body.name }, { phonenumber: body.phonenumber}] })
 .then(existingPerson => {
   if (existingPerson) {
     if(existingPerson.name ===body.name) {

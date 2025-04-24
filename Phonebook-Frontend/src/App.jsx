@@ -7,27 +7,33 @@ import Button from './button';
 
 
 
-const App = () => {
-
-  
+const App = () => {  
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
   const [showAll, setShowAll] = useState(" ");
   
-  const  hook = () => {
+  useEffect(() => {
     phoneservices.getAll()
-      .then(response => {
-        setPersons(response)
-        
+      .then(initialPersons => {
+        console.log('Data received from getAll:', initialPersons);
+
+        if (Array.isArray(initialPersons)) {
+          setPersons(initialPersons);
+          console.log('Persons state succesfully');
+           } else {
+            console.error("Error: Data received from server is not array!", initialPersons)
+           
+        setPersons([])
+        alert("Could notload phonebok data correctly.")
+           }
       })
 
       .catch(error => {
        console.error("Error fetching data:", error);
        alert("Error fetching data. Please try again later.");
       })
-    }
-    useEffect(hook, []);
+    }, []);
  
 const handleNameChange = (e) =>  {  
   setNewName(e.target.value);
@@ -112,7 +118,7 @@ return (
 
 {filterphonebook.length > 0 ? (
   filterphonebook.map(person => (
-    <div key={person.id}>{person.name} : {person.phoneNumber} 
+    <div key={person.id}>{person.name} : {person.phonenumber} 
     <Button handleDelete= {handleDelete} 
     id={person.id} /> </div>))
   ) : (
