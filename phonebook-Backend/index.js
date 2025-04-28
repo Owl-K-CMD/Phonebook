@@ -1,9 +1,10 @@
 
 
-require('dotenv').config()
-const Person = require('./models/person')
-const express = require('express')
-const app = express()
+require('dotenv').config();
+const Person = require('./models/person');
+const express = require('express');
+const mongoose = require('mongoose');
+const app = express();
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
@@ -13,10 +14,11 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
-
+app.use(express.json())
+app.use(requestLogger)
 app.use(express.static('dist'))
-app.use('dist')
-app.use('requestLogger')
+//app.use('dist')
+
 
 
 
@@ -51,38 +53,10 @@ const getCurrentDateTime  = () => new Date()
   response.send(`Phonebook has info for ${count} 
     people </br> ${getCurrentDateTime()}`)
   })
-.catch(error => next(error)) 
-  } )
-
-app.get('/api/persons/:id', (request, response, next) => {
-Person.findById(request.params.id)
-.then(person => {
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).send({error: 'Person not found'})
-  }
-})
 .catch(error => next(error))
-})
+} )
 
-/*
-app.delete('/api/persons/:id', (request, response) => {
-  const id = request.params.id
-  const initialLenght = person.length
-  const newPersons = person.filter(person => person.id !== id);
-  const finalLenght = newPersons.length
-  if(initialLenght === finalLenght)
-  {
-    response.status(404).end()
-  } else{
-    person.length = 0
-    person.push(...newPersons)
-    
-    response.status(204).end()
-  }
-})
-*/
+
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
@@ -95,9 +69,9 @@ app.delete('/api/persons/:id', (request, response, next) => {
     })
     .catch(error => next(error));
 })
-
+/*
 app.post('/api/persons', (request, response, next) => {
-  const body = request.body
+  const body = request.body;
 
   if (!body.name) {
     return response.status(400).json({
@@ -110,26 +84,6 @@ app.post('/api/persons', (request, response, next) => {
 })
 }  
 
- /* 
-  onst newPerson = {
-  
-    name: body.name,
-    phonenumber: body.phonenumber
-  }
-   const nameExistence = person.some(person => person.name === newPerson.name)
-  if(nameExistence)
-  {
-    return response.status(400).json({
-      error: 'name must be unique'
-    })}
-   const phonenumberExistence = person.some(person => person.phonenumber === newPerson.phonenumber)
-   
-    if(phonenumberExistence)
-    {
-      return response.status(400).json({
-        error: 'phonenumber must be unique'
-      })}
-*/
  
 Person.findOne({$or: [{ name: body.name }, { phonenumber: body.phonenumber}] })
 .then(existingPerson => {
@@ -151,8 +105,37 @@ Person.findOne({$or: [{ name: body.name }, { phonenumber: body.phonenumber}] })
 })
 .catch(error => next(error))
 })
+*/
+app.post('/api/persons', (request, response, next) => {
+  const body = request.body
+  
+  if (!body.name || !body.phonenumber) {
+    return response.status(400).json({ 
+      error: 'content missing' 
+    })
+  }
+
+  const person = new Person({
+    name: body.name,
+    phonenumber: body.phonenumber
+  })
 
 
+
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
+  .catch(error => next(error))
+})
+
+
+  
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
 
 const PORT = process.env.PORT || 3000;
 

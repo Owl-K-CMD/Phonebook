@@ -8,8 +8,6 @@ process.exit(1);
 var password = process.argv[2];
 
 
-
-
 const url =  `mongodb+srv://kumutimam:${password}@cluster0.eckuzim.mongodb.net/Phonebook?retryWrites=true&w=majority&appName=Cluster0`
 
 mongoose.set('strictQuery', false)
