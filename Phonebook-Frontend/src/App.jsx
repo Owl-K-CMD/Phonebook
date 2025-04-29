@@ -40,8 +40,8 @@ const App = () => {
     const hook = () => {
       phoneservices
       .getAll()
-      .then(initialNotes => {
-        phoneservices(initialNotes)
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
     }
     
