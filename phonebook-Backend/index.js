@@ -28,6 +28,7 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons',(request, response, next) => {
+  console.log('Attempting to fetch app persons')
   Person.find({}).then(persons => {
     response.json(persons)
   })
@@ -130,12 +131,13 @@ app.post('/api/persons', (request, response, next) => {
 
 
   
-
+/*
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
 app.use(unknownEndpoint)
+*/
 
 const PORT = process.env.PORT || 3000;
 
