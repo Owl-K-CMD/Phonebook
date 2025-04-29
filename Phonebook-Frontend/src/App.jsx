@@ -13,6 +13,7 @@ const App = () => {
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
   const [showAll, setShowAll] = useState(" ");
   
+  /*
   useEffect(() => {
     phoneservices.getAll()
       .then(initialPersons => {
@@ -34,7 +35,19 @@ const App = () => {
        alert("Error fetching data. Please try again later.");
       })
     }, []);
+    */
  
+    const hook = () => {
+      phoneservices
+      .getAll()
+      .then(initialNotes => {
+        phoneservices(initialNotes)
+      })
+    }
+    
+    useEffect(hook, [])
+    
+
 const handleNameChange = (e) =>  {  
   setNewName(e.target.value);
 };
