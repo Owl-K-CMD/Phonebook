@@ -117,10 +117,10 @@ return (
         <h2>Numbers</h2> 
 
 {filterphonebook.length > 0 ? (
-  filterphonebook.map(person => (
-    <div key={person.id}>{person.name} : {person.phonenumber} 
+  filterphonebook.map(persons => (
+    <div key={persons.id}>{persons.name} : {persons.phonenumber} 
     <Button handleDelete= {handleDelete} 
-    id={person.id} /> </div>))
+    id={persons.id} /> </div>))
   ) : (
     <div>No persons found</div>
   )
