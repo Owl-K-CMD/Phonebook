@@ -28,7 +28,7 @@ app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 
-app.get('/api/persons',(request, response, next) => {
+app.get('/api/person',(request, response, next) => {
   console.log('Attempting to fetch app persons')
   Person.find({}).then(persons => {
     response.json(persons)

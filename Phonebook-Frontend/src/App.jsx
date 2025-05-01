@@ -26,7 +26,7 @@ const App = () => {
             console.error("Error: Data received from server is not array!", initialPersons)
            
         setPersons([])
-        alert("Could notload phonebok data correctly.")
+        alert("Could not load phonebok data correctly.")
            }
       })
 
