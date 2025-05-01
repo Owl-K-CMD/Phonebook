@@ -32,22 +32,11 @@ const App = () => {
 
       .catch(error => {
        console.error("Error fetching data:", error);
-       alert("Error fetching data. Please try again later.");
+      //alert("Error fetching data. Please try again later.");
       })
     }, []);
     
- /*
-    const hook = () => {
-      phoneservices
-      .getAll()
-      .then(initialPersons => {
-        setPersons(initialPersons)
-      })
-    }
-    
-    useEffect(hook, [])
-   
-*/ 
+
 const handleNameChange = (e) =>  {  
   setNewName(e.target.value);
 };
@@ -130,10 +119,10 @@ return (
         <h2>Numbers</h2> 
 
 {filterphonebook.length > 0 ? (
-  filterphonebook.map(person => (
-    <div key={person.id}>{person.name} : {person.phonenumber} 
-    <Button handleDelete= {handleDelete} 
-    id={person.id} /> </div>))
+  filterphonebook.map(persons => (
+    <div key={persons.id}>{persons.name} :
+    {persons.phonenumber}  <Button handleDelete= {handleDelete} 
+    id={persons.id} /> </div>))
   ) : (
     <div>No persons found</div>
   )
