@@ -13,7 +13,7 @@ const App = () => {
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
   const [showAll, setShowAll] = useState(" ");
   
-  /*
+  
   useEffect(() => {
     phoneservices.getAll()
       .then(initialPersons => {
@@ -35,8 +35,8 @@ const App = () => {
        alert("Error fetching data. Please try again later.");
       })
     }, []);
-    */
- 
+    
+ /*
     const hook = () => {
       phoneservices
       .getAll()
@@ -46,8 +46,8 @@ const App = () => {
     }
     
     useEffect(hook, [])
-    
-
+   
+*/ 
 const handleNameChange = (e) =>  {  
   setNewName(e.target.value);
 };
@@ -130,10 +130,10 @@ return (
         <h2>Numbers</h2> 
 
 {filterphonebook.length > 0 ? (
-  filterphonebook.map(persons => (
-    <div key={persons.id}>{persons.name} : {persons.phonenumber} 
+  filterphonebook.map(person => (
+    <div key={person.id}>{person.name} : {person.phonenumber} 
     <Button handleDelete= {handleDelete} 
-    id={persons.id} /> </div>))
+    id={person.id} /> </div>))
   ) : (
     <div>No persons found</div>
   )

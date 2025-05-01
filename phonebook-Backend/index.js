@@ -1,7 +1,7 @@
 
 
 require('dotenv').config();
-const Person = require('./models/person');
+const Person = require('./module/person');
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();

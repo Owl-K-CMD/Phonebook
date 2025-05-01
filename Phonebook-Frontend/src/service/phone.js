@@ -5,21 +5,21 @@ const baseUrl  = '/api/persons'
 console.log('base Url is:', baseUrl)
 
 const getAll = () => {
-  const request = axios.get(baseUrl);
-  return request.then(response => response.data);
+  const request = axios.get(baseUrl)
+  return request.then(response => response.data)
 };
-console.log('now base Url is:', baseUrl)
-console.log('getAll is:', getAll)
+console.log('now base Url is:', baseUrl);
+console.log('getAll is:', getAll);
 
 const create = newObject => {
-  const request = axios.post(baseUrl, newObject);
-  return request.then(response => response.data);
+  const request = axios.post(baseUrl, newObject)
+  return request.then(response => response.data)
   
 };
 
 const deletePerson = id => {
-  const request = axios.delete(`${baseUrl}/${id}`);
-  return request.then(response => response.data);
+  const request = axios.delete(`${baseUrl}/${id}`)
+  return request.then(response => response.data)
 };
 
 
