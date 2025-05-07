@@ -1,5 +1,4 @@
 
-
 require('dotenv').config();
 const Person = require('./module/person');
 const express = require('express');
@@ -17,10 +16,6 @@ const requestLogger = (request, response, next) => {
 app.use(express.json())
 app.use(requestLogger)
 app.use(express.static('dist'))
-//app.use(requestLogger)
-//app.use('dist')
-
-//const persons = [];
 
 
 
@@ -43,21 +38,21 @@ app.get('/api/persons/:id', (request, response, next) => {
     if (person) {
       response.json(person)
     } else {
-      response.status(404).send({error:'Person not foud'})
+      response.status(404).send({error:'Person not found'})
     }
   })
   .catch(error => next(error))
 })
 
 app.get('/api/info', (request, response, next) => {
-  console.log('This is work')
-Person.countDocument({}).then(count => {
-const getCurrentDateTime  = () => new Date()
-  response.send(`Phonebook has info for ${count} 
-    people </br> ${getCurrentDateTime()}`)
+  console.log('This is work');
+Person.countDocuments({})
+.then(count => {
+const getCurrentDateTime  = ()  => new Date();
+  response.send(`Phonebook has info for ${count} people </br> ${getCurrentDateTime()}`);
   })
-.catch(error => next(error))
-} )
+.catch(error => next(error));
+})
 
 
 
@@ -72,74 +67,92 @@ app.delete('/api/persons/:id', (request, response, next) => {
     })
     .catch(error => next(error));
 })
-/*
-app.post('/api/persons', (request, response, next) => {
-  const body = request.body;
 
-  if (!body.name) {
-    return response.status(400).json({
-      error: 'name missing'
-    })
-   }
-    if (!body.phonenumber) {
-    return response.status(400).json({
-      error: 'phonenumber missing'
-})
-}  
-
- 
-Person.findOne({$or: [{ name: body.name }, { phonenumber: body.phonenumber}] })
-.then(existingPerson => {
-  if (existingPerson) {
-    if(existingPerson.name ===body.name) {
-      return response.status(400).json({error: 'name must be unique'})
-    } else {
-      return response.status(400).json({error: 'phonenumber must be unique'})
-    }
-  }
-  const person = new Person({
-    name: body.name,
-    phonenumber: body.phonenumber
-})
-  person.save().then(savedPerson => {
-    response.json(savedPerson)
-  })
-  .catch(error => next(error))
-})
-.catch(error => next(error))
-})
-*/
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
   
   if (!body.name || !body.phonenumber) {
     return response.status(400).json({ 
-      error: 'content missing' 
+      error: 'All the name and phonenumber are required' 
     })
   }
 
-  const person = new Person({
-    name: body.name,
-    phonenumber: body.phonenumber
+  Person.findOne({name: body.name})
+  .then(existingPerson => {
+   if (existingPerson) {
+    existingPerson.phonenumber == body.phonenumber
+    existingPerson.save()
+    .then(updatedPerson => {
+      console.log(updatedPerson)
+      response.json(updatedPerson)
+    })
+    .catch(error => next(error))
+   } else {
+       const person = new Person({
+      name: body.name,
+      phonenumber: body.phonenumber
+    })
+
+    person.save()
+    .then(savedPerson => {
+      console.log(`Added new person: ${savedPerson.name}`)
+      response.json(savedPerson)
+    })
+    .catch(error => next(error))
+   }
   })
-
-
-
-  person.save().then(savedPerson => {
-    response.json(savedPerson)
-  })
-  .catch(error => next(error))
+  .catch(error => {
+    if (error.name === 'ValidationError') {
+      res.status(400).json({ error: error.message });
+    } else {
+      console.error('Unexpected error:', error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
 })
 
+app.put('/api/persons/:id', (request, response, next) => {
+  const { content, important } = request.body
 
-  
-/*
+  Person.findById(request.params.id)
+    .then(person => {
+      if (!person) {
+        return response.status(404).end()
+      }
+
+      person.content = content
+      person.important = important
+
+      return person.save().then((updatedperson) => {
+        response.json(updatedperson)
+      })
+    })
+    .catch(error => next(error))
+})
+
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
+// handler of requests with unknown endpoint
 app.use(unknownEndpoint)
-*/
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
+
+  next(error)
+}
+
+// this has to be the last loaded middleware, also all the routes should be registered before this!
+app.use(errorHandler)
+
+
 
 const PORT = process.env.PORT || 3000;
 

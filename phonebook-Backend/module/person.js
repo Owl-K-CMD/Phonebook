@@ -16,11 +16,23 @@ mongoose.connect(url)
     console.log('error connecting to MongoDB:', error.message)
   })
 
-const personSchema = new mongoose.Schema({
-  name: String,
-  phonenumber: String,
-})
+//const personSchema = new mongoose.Schema({
+  //name: String,
+  //phonenumber: String,
+//})
 
+const personSchema = new mongoose.Schema({
+  name : {
+    type: String,
+    minLength: [5, 'Person validation fail: name {VALUE} is shorter that minimum length (5)'],
+    required: [true, 'name is required']
+  },
+  phonenumber : {
+    type: String,
+    minLength: [10, 'Person validation fail: phonenumber {VALUE} is shorter that minimum length (10)'],
+    required: [true, 'phonenumber is required']
+  },
+})
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()

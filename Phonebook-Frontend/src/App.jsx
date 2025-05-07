@@ -5,13 +5,22 @@ import Button from './button';
 
 
 
-
+const Notification = ({message}) => {
+  if (message === null) {
+    return null;
+  }
+  return (< div className = "error">
+    {message}
+  </div> 
+)
+}
 
 const App = () => {  
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
   const [showAll, setShowAll] = useState(" ");
+  const [errorMessage, setErrorMessage] = useState(null);
   
   
   useEffect(() => {
@@ -44,24 +53,23 @@ const handlePhoneNumberChange = (e) => {
   setNewPhoneNumber(e.target.value);
 };
 
+
 const addName = (e) => {
   e.preventDefault();
- 
-
     if (persons.some(person => person.name === newName)) {
 alert(`${newName} is already added to phonebook`);
+
       return; 
   }
 
-  if (persons.some(person => person.phoneNumber === newPhoneNumber)) {
+  if (persons.some(person => person.phonenumber === newPhoneNumber)) {
     alert(`${newPhoneNumber} is already added to phonebook`);
         return;    
   }
 
   const nameObject = {
     name: newName,
-    phoneNumber: newPhoneNumber
-
+    phonenumber: newPhoneNumber
   }
 
   phoneservices
@@ -72,13 +80,25 @@ alert(`${newName} is already added to phonebook`);
      setNewPhoneNumber('')
     
   }) 
-  
+
+  .catch(error => {
+    console.log(error.response.data.error)
+    setErrorMessage(`Error: ${error.response?.data?.error || 'Unknown error'}`);
+  })
+  setTimeout(() => {
+    setErrorMessage(null)
+  }, 10000)
+
 }
 
 const filterphonebook = persons.filter(person => person.name.toLowerCase().includes(showAll.toLowerCase()));
 
 const handleDelete = (id) => {
   const person = persons.find(p => p.id === id);
+  if (!person) {
+    console.error(`Person with ID ${id} not found.`);
+    return;
+  }
   const confirmDelete = window.confirm(`Delete ${person.name}?`);
   if (confirmDelete) {
     phoneservices
@@ -86,15 +106,28 @@ const handleDelete = (id) => {
       .then(() => {
         setPersons(persons.filter(p => p.id !== id));
         
-      });
-  }}
-  
-
+      })
+    
+    
+      .catch(error => {
+        console.error("Error deleting person:", error);
+        setErrorMessage(
+          `Information of ${person.name} has already been removed from server`
+        );
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 10000)
+        setPersons(persons.filter(n => n.id !== id))
+      })
+  }
+  }
 
 return (
     <div>
           
           <h2>Phonebook</h2>
+          <Notification message = {errorMessage} />
+
           <div>filter shown with: <input
     value = {showAll}
     onChange={e => setShowAll(e.target.value)}
