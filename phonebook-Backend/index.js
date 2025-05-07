@@ -80,7 +80,7 @@ app.post('/api/persons', (request, response, next) => {
   Person.findOne({name: body.name})
   .then(existingPerson => {
    if (existingPerson) {
-    existingPerson.phonenumber == body.phonenumber
+    existingPerson.phonenumber = body.phonenumber
     existingPerson.save()
     .then(updatedPerson => {
       console.log(updatedPerson)
@@ -103,16 +103,16 @@ app.post('/api/persons', (request, response, next) => {
   })
   .catch(error => {
     if (error.name === 'ValidationError') {
-      res.status(400).json({ error: error.message });
+      response.status(400).json({ error: error.message });
     } else {
       console.error('Unexpected error:', error);
-      res.status(500).json({ error: 'Server error' });
+      response.status(500).json({ error: 'Server error' });
     }
   });
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  const { content, important } = request.body
+  const { name, phonenumber } = request.body
 
   Person.findById(request.params.id)
     .then(person => {
@@ -120,8 +120,8 @@ app.put('/api/persons/:id', (request, response, next) => {
         return response.status(404).end()
       }
 
-      person.content = content
-      person.important = important
+      person.name = name
+      person.phonenumber = phonenumber
 
       return person.save().then((updatedperson) => {
         response.json(updatedperson)
