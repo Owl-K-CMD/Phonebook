@@ -19,8 +19,8 @@ const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
-  const [showAll, setShowAll] = useState(" ");
-  const [errorMessage, setErrorMessage] = useState("null");
+  const [showAll, setShowAll] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
   
   
   useEffect(() => {
@@ -35,7 +35,7 @@ const App = () => {
             console.error("Error: Data received from server is not array!", initialPersons)
            
         setPersons([])
-        alert("Could not load phonebok data correctly.")
+       alert("Could not load phonebok data correctly.")
            }
       })
 
@@ -57,13 +57,14 @@ const handlePhoneNumberChange = (e) => {
 const addName = (e) => {
   e.preventDefault();
     if (persons.some(person => person.name === newName)) {
-alert(`${newName} is already added to phonebook`);
-
+setErrorMessage(`${newName} is already added to phonebook`);
+setTimeout(() => { setErrorMessage(null)}, 10000)
       return; 
   }
 
   if (persons.some(person => person.phonenumber === newPhoneNumber)) {
-    alert(`${newPhoneNumber} is already added to phonebook`);
+    setErrorMessage(`${newPhoneNumber} is already added to phonebook`);
+    setTimeout(() => { setErrorMessage(null)}, 10000)
         return;    
   }
 
@@ -79,17 +80,29 @@ alert(`${newName} is already added to phonebook`);
     setNewName('');
      setNewPhoneNumber('')
     
-  }) 
+  })
+  /*
+  //.then(returnedPerson => {
+    console.log('Server response from create:', returnedPerson);
+    if (returnedPerson && returnedPerson.id && returnedPerson.name) {
+      setPersons(persons.concat(returnedPerson));
+      setNewName('');
+      setNewPhoneNumber('');
+      setErrorMessage(`${returnedPerson.name} was successfully added!`);
+      setTimeout(() => { setErrorMessage(null)}, 10000)
+    } else {
+      console.error('Failed to add person: Invalid response from server.', returnedPerson);
+      setErrorMessage('Failed to add person: Invalid response from server.');
+      setTimeout(() => { setErrorMessage(null)}, 10000)
+    }
+  })
+  */
 
   .catch(error => {
     console.log(error.response.data.error)
     setErrorMessage(`Error: ${error.response?.data?.error || 'Unknown error'}`);
   })
-  setTimeout(() => {
-    setErrorMessage(null)
-  }, 10000)
-
-}
+  setTimeout(() => {setErrorMessage(null)}, 10000)}
 
 const filterphonebook = persons.filter(person => person.name.toLowerCase().includes(showAll.toLowerCase()));
 
