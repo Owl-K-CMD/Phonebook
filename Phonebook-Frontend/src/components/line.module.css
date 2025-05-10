@@ -1,3 +1,14 @@
+.personItem{
+  background-color: rgb(255 155 255 );
+
+}
+.personItem.button{
+  box-shadow: 0 0 7px red;
+}
+.formGroup{
+box-shadow: 0 0 7px rgb(255 255 25);
+}
+
 
 .line{
   background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);

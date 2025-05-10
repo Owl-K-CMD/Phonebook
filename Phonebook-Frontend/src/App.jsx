@@ -2,8 +2,21 @@
 import { useState, useEffect } from "react";
 import phoneservices from './service/phone';
 import Button from './button';
+import style from './components/line.module.css'
 
-
+const Footer = () => {
+  const footerStyle = {
+    color: 'green',
+    fontStyle: 'italic',
+    fontSize: 16
+  }
+  return (
+    <div style={footerStyle}>
+      <br />
+      <em>Note app, Department of Computer Science, University of Helsinki 2022</em>
+    </div>
+  )
+}
 
 const Notification = ({message}) => {
   if (message === null) {
@@ -138,41 +151,44 @@ const handleDelete = (id) => {
 return (
     <div>
           
-          <h2>Phonebook</h2>
-          <Notification message = {errorMessage} />
+          <h1 className={style.title}>Phonebook</h1>
+          <Notification message = {errorMessage} className={style.error}/>
 
-          <div>filter shown with: <input
+          <div className={style.filter}>filter shown with: <input
     value = {showAll}
     onChange={e => setShowAll(e.target.value)}
     /></div>
 
-      <h2 >Add a new</h2>
-      <form onSubmit={addName}>
-        <div>
+      <h2 className={style.addNew}>Add a new</h2>
+      <form className={style.Form} onSubmit={addName}>
+        <div className={style.formGroup}>
           name: <input value={newName}         
           onChange={handleNameChange} />
           </div>
-          <div>phone: <input value={newPhoneNumber} 
+          <div className={style.formGroup}>phone: <input value={newPhoneNumber} 
           onChange={handlePhoneNumberChange}
           /></div>
         
         <div>
           
-          <button type="submit" >add</button>
+          <button type="submit"  className={style.buttonAdd}>add</button>
         </div>
 
         </form>
-        <h2>Numbers</h2> 
+        <h2 className={style.title}>Numbers</h2> 
 
 {filterphonebook.length > 0 ? (
   filterphonebook.map(persons => (
-    <div key={persons.id}>{persons.name} :
+    <div key={persons.id} className={style.personItem}>{persons.name} :
     {persons.phonenumber}  <Button handleDelete= {handleDelete} 
     id={persons.id} /> </div>))
   ) : (
-    <div>No persons found</div>
+    <div className={style.noPersons}>No persons found</div>
   )
  }
+
+<div className={style.line}></div>
+  <Footer />
     </div>
 )
 

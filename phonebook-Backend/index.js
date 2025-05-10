@@ -1,8 +1,14 @@
+const app = require('./app') // the actual Express application
+const config = require('./utils/config')
+const logger = require('./utils/logger')
 
+app.listen(config.PORT, () => {
+  logger.info(`Server running on port ${config.PORT}`)
+})
+/*
 require('dotenv').config()
 const Person = require('./module/person')
 const express = require('express')
-//const mongoose = require('mongoose')
 const app = express()
 
 const requestLogger = (request, response, next) => {
@@ -156,3 +162,4 @@ const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+*/
